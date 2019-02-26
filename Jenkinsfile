@@ -88,17 +88,17 @@ stage('test') {
     ])
   })
   for (def nodeVersion in nodeVersions) {
-    parallelExecutors["macOS node ${nodeVersion} Debug"]   = doMacBuild("node Debug ${nodeVersion}")
-    parallelExecutors["macOS node ${nodeVersion} Release"] = doMacBuild("node Release ${nodeVersion}")
+    // parallelExecutors["macOS node ${nodeVersion} Debug"]   = doMacBuild("node Debug ${nodeVersion}")
+    // parallelExecutors["macOS node ${nodeVersion} Release"] = doMacBuild("node Release ${nodeVersion}")
     parallelExecutors["Linux node ${nodeVersion} Debug"]   = doDockerBuild("node Debug ${nodeVersion}", nodeVersion)
     parallelExecutors["Linux node ${nodeVersion} Release"] = doDockerBuild("node Release ${nodeVersion}", nodeVersion)
     parallelExecutors["Linux test runners ${nodeVersion}"] = doDockerBuild('test-runners', nodeVersion)
   }
-  parallelExecutors["React Native iOS Debug"] = doMacBuild('react-tests Debug')
-  parallelExecutors["React Native iOS Release"] = doMacBuild('react-tests Release')
-  parallelExecutors["React Native iOS Example Debug"] = doMacBuild('react-example Debug')
-  parallelExecutors["React Native iOS Example Release"] = doMacBuild('react-example Release')
-  parallelExecutors["Windows node"] = doWindowsBuild()
+  // parallelExecutors["React Native iOS Debug"] = doMacBuild('react-tests Debug')
+  // parallelExecutors["React Native iOS Release"] = doMacBuild('react-tests Release')
+  // parallelExecutors["React Native iOS Example Debug"] = doMacBuild('react-example Debug')
+  // parallelExecutors["React Native iOS Example Release"] = doMacBuild('react-example Release')
+  // parallelExecutors["Windows node"] = doWindowsBuild()
   //android_react_tests: doAndroidBuild('react-tests-android', {
   //  junit 'tests/react-test-app/tests.xml'
   //}),
