@@ -577,7 +577,7 @@ module.exports = {
                         sync: {
                             user,
                             error : err => console.log(err),
-                            url: 'realm://localhost:9080/~/sync-v1'
+                            url: 'realm://localhost:9080/~/sync-v1',
                             recoveryDirectory: recoveryDirectory(),
                         }
                     };
