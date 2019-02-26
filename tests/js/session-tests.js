@@ -27,7 +27,7 @@ const TestCase = require('./asserts');
 let schemas = require('./schemas');
 
 const isElectronProcess = typeof process === 'object' && process.type === 'renderer';
-const isNodeProccess = typeof process === 'object' && process + '' === '[object process]' && !isElectronProcess;
+const isNodeProcess = typeof process === 'object' && process + '' === '[object process]' && !isElectronProcess;
 
 const require_method = require;
 function node_require(module) {
@@ -39,7 +39,7 @@ let fs;
 let execFile;
 let path;
 
-if (isNodeProccess) {
+if (isNodeProcess) {
     tmp = node_require('tmp');
     fs = node_require('fs');
     execFile = node_require('child_process').execFile;
@@ -60,6 +60,13 @@ function copyFileToTempDir(filename) {
     let tmpFile = tmp.fileSync({ dir: tmpDir.name });
     fs.appendFileSync(tmpFile.fd, content);
     return tmpFile.name;
+}
+
+function recoveryDirectory() {
+    if (isNodeProcess) {
+        return tmp.dirSync().name;
+    }
+    return undefined;
 }
 
 function runOutOfProcess() {
@@ -114,7 +121,7 @@ module.exports = {
     },
 
     testCustomHTTPHeaders() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -181,7 +188,7 @@ module.exports = {
     },
 
     testRealmOpen() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -217,7 +224,7 @@ module.exports = {
     },
 
     testRealmOpenWithExistingLocalRealm() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -259,7 +266,7 @@ module.exports = {
     },
 
     testRealmOpenAsync() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -308,7 +315,7 @@ module.exports = {
     },
 
     testRealmOpenAsyncNoSchema() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -437,7 +444,7 @@ module.exports = {
     },
 
     testListNestedSync() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -478,7 +485,7 @@ module.exports = {
 
     testIncompatibleSyncedRealmOpen() {
         let realm = "sync-v1.realm";
-        if (isNodeProccess) {
+        if (isNodeProcess) {
             realm = copyFileToTempDir(path.join(process.cwd(), "data", realm));
         }
         else {
@@ -495,6 +502,7 @@ module.exports = {
                         error : err => console.log(err),
                         url: 'realm://localhost:9080/~/sync-v1',
                         fullSynchronization: true,
+                        recoveryDirectory: recoveryDirectory(),
                     }
                 };
                 return Realm.open(config)
@@ -512,7 +520,7 @@ module.exports = {
 
     testIncompatibleSyncedRealmOpenAsync() {
         let realm = "sync-v1.realm";
-        if (isNodeProccess) {
+        if (isNodeProcess) {
             realm = copyFileToTempDir(path.join(process.cwd(), "data", realm));
         }
         else {
@@ -529,6 +537,7 @@ module.exports = {
                         error : err => console.log(err),
                         url: 'realm://localhost:9080/~/sync-v1',
                         fullSynchronization: true,
+                        recoveryDirectory: recoveryDirectory(),
                     }
                 };
 
@@ -553,7 +562,7 @@ module.exports = {
 
     testIncompatibleSyncedRealmConsructor() {
         let realm = "sync-v1.realm";
-        if (isNodeProccess) {
+        if (isNodeProcess) {
             realm = copyFileToTempDir(path.join(process.cwd(), "data", realm));
         }
         else {
@@ -568,7 +577,8 @@ module.exports = {
                         sync: {
                             user,
                             error : err => console.log(err),
-                            url: 'realm://localhost:9080/~/sync-v1'
+                            url: 'realm://localhost:9080/~/sync-v1',
+                            recoveryDirectory: recoveryDirectory(),
                         }
                     };
 
@@ -591,7 +601,7 @@ module.exports = {
     },
 
 /*    testProgressNotificationsForRealmConstructor() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -625,7 +635,7 @@ module.exports = {
     },*/
 
     testProgressNotificationsUnregisterForRealmConstructor() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -692,7 +702,7 @@ module.exports = {
     },
 
     testProgressNotificationsForRealmOpen() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -720,7 +730,7 @@ module.exports = {
     },
 
     testProgressNotificationsForRealmOpenAsync() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -764,7 +774,7 @@ module.exports = {
     },
 
     testDisableUrlCheck() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -860,7 +870,7 @@ module.exports = {
     },
 
     testPartialSync() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -952,7 +962,7 @@ module.exports = {
     },
 
     testPartialSyncWithDynamicSchema() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
         const username = uuid();
@@ -999,7 +1009,7 @@ module.exports = {
     },
 
     testRoleClassWithPartialSyncCanCoexistWithPermissionsClass() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -1025,7 +1035,7 @@ module.exports = {
 
     testClientReset() {
         // FIXME: try to enable for React Native
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -1058,7 +1068,7 @@ module.exports = {
     },
 
     testAddConnectionNotification() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -1085,7 +1095,7 @@ module.exports = {
     },
 
     testRemoveConnectionNotification() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -1119,7 +1129,7 @@ module.exports = {
     },
 
     testConnectionState() {
-        if (!isNodeProccess) {
+        if (!isNodeProcess) {
             return;
         }
 
@@ -1166,7 +1176,7 @@ module.exports = {
     },
 
     testResumePause() {
-        if(!isNodeProccess) {
+        if(!isNodeProcess) {
             return;
         }
 
@@ -1203,7 +1213,7 @@ module.exports = {
     },
 
     testMultipleResumes() {
-        if(!isNodeProccess) {
+        if(!isNodeProcess) {
             return;
         }
 
@@ -1239,7 +1249,7 @@ module.exports = {
     },
 
     testMultiplePauses() {
-        if(!isNodeProccess) {
+        if(!isNodeProcess) {
             return;
         }
 
@@ -1275,7 +1285,7 @@ module.exports = {
     },
 
     testUploadDownloadAllChanges() {
-        if(!isNodeProccess) {
+        if(!isNodeProcess) {
             return;
         }
 
@@ -1328,7 +1338,7 @@ module.exports = {
     },
 
     testDownloadAllServerChangesTimeout() {
-        if(!isNodeProccess) {
+        if(!isNodeProcess) {
             return;
         }
 
@@ -1354,7 +1364,7 @@ module.exports = {
     },
 
     testUploadAllLocalChangesTimeout() {
-        if(!isNodeProccess) {
+        if(!isNodeProcess) {
             return;
         }
 
@@ -1380,7 +1390,7 @@ module.exports = {
     },
 
     testReconnect() {
-        if(!isNodeProccess) {
+        if(!isNodeProcess) {
             return;
         }
 
