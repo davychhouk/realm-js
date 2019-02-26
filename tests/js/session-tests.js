@@ -62,6 +62,13 @@ function copyFileToTempDir(filename) {
     return tmpFile.name;
 }
 
+function recoveryDirectory() {
+    if (isNodeProcess) {
+        return tmp.dirSync().name;
+    }
+    return undefined;
+}
+
 function runOutOfProcess() {
     const args = Array.prototype.slice.call(arguments);
     let tmpDir = tmp.dirSync();
@@ -495,6 +502,7 @@ module.exports = {
                         error : err => console.log(err),
                         url: 'realm://localhost:9080/~/sync-v1',
                         fullSynchronization: true,
+                        recoveryDirectory: recoveryDirectory(),
                     }
                 };
                 return Realm.open(config)
@@ -529,6 +537,7 @@ module.exports = {
                         error : err => console.log(err),
                         url: 'realm://localhost:9080/~/sync-v1',
                         fullSynchronization: true,
+                        recoveryDirectory: recoveryDirectory(),
                     }
                 };
 
@@ -569,6 +578,7 @@ module.exports = {
                             user,
                             error : err => console.log(err),
                             url: 'realm://localhost:9080/~/sync-v1'
+                            recoveryDirectory: recoveryDirectory(),
                         }
                     };
 
